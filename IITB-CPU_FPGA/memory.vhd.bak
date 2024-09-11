@@ -1,0 +1,52 @@
+library IEEE;
+use IEEE.STD_LOGIC_1164.ALL;
+use IEEE.numeric_std.all; 	 
+
+entity memory is 
+port(
+    M_add, M_inp : in std_logic_vector(15 downto 0);
+	 clock, Mem_W : in std_logic;
+    M_data : out std_logic_vector(15 downto 0)
+    );	 
+end entity memory;
+
+architecture behav of memory is
+type array_of_vectors is array (65535 downto 0) of std_logic_vector(15 downto 0);
+signal mem_storage : array_of_vectors := (0 => "0000000001010000",
+1 => "0010000001010000",
+2 => "0011000001010000",
+3 => "0001000001010000",
+4 => "0100000001010000",
+5 => "0101000001010000",
+6 => "0110000001010000",
+7 => "1000000001010000",
+8 => "1001000000000001",
+9 => "1010000001010000",
+10 => "1011000001010000",
+11 => "1100000001010000",
+12=>"1101000001010000",
+13 => "0111000001010000",
+14 => "1111000001010000",
+15 => "1110000001010000", 
+16 => "1110000001010000",
+17 => "1100100101001000",    
+others => "1100100101001000");
+-- To store the instruction registers at mem_Address(M_Add)
+begin
+--Writing Process
+mem_write: process(clock)
+--writing is synchronous and if Mem_W is 1 and rising_edge of the clock then we can store data at that memory address
+    begin
+        if(rising_edge(clock)) then
+            if (Mem_W = '1') then
+                mem_storage(to_integer(unsigned(M_add))) <= M_inp;
+            else 
+                null;
+            end if;
+        else
+            null;
+        end if;
+    end process; 	 
+	 --reading is asynchronous just the address is needed to Fetch the data.
+M_data <= mem_storage(to_integer(unsigned(M_add))) ;	 
+end architecture behav;
